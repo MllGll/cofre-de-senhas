@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
@@ -20,6 +22,8 @@ export default function RootLayout({
 			<body>
 				{children}
 				<Toaster richColors position="top-center" />
+				<Analytics />
+				<SpeedInsights />
 			</body>
 		</html>
 	);
