@@ -428,7 +428,7 @@ export default function PasswordVault() {
 	};
 
 	// Renderização condicional para modo não suportado
-	if (window && !isFileSystemAccessSupported) {
+	if (typeof window !== "undefined" && !isFileSystemAccessSupported) {
 		return (
 			<div className="min-h-screen bg-background flex items-center justify-center p-4">
 				<Card className="w-full max-w-2xl">
