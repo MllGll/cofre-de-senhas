@@ -60,6 +60,7 @@ export default function AddCredential({
 									}))
 								}
 								placeholder="Ex: Gmail Pessoal"
+								maxLength={50}
 							/>
 						</div>
 
@@ -100,6 +101,7 @@ export default function AddCredential({
 									}))
 								}
 								placeholder="usuario@email.com"
+								maxLength={50}
 							/>
 						</div>
 
@@ -115,6 +117,7 @@ export default function AddCredential({
 									}))
 								}
 								placeholder="Senha segura"
+								maxLength={50}
 							/>
 						</div>
 					</div>
@@ -130,6 +133,7 @@ export default function AddCredential({
 								}))
 							}
 							placeholder="https://exemplo.com"
+							maxLength={100}
 						/>
 					</div>
 
@@ -145,6 +149,7 @@ export default function AddCredential({
 							}
 							placeholder="Informações adicionais..."
 							rows={3}
+							maxLength={500}
 						/>
 					</div>
 

@@ -1,4 +1,4 @@
-import { Monitor, Moon, Sun } from "lucide-react";
+import { Monitor, Moon, Sun, TriangleAlert } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import type { AppSettings } from "@/types";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 type SettingsProps = {
 	showSettings: boolean;
@@ -104,6 +105,26 @@ export default function Settings({
 							</SelectContent>
 						</Select>
 					</div>
+
+					<Alert className="bg-yellow-50 text-yellow-800 border border-yellow-200">
+						<AlertTitle>Sobre as configurações salvas</AlertTitle>
+						<AlertDescription>
+							<p>
+								As preferências e dados configurados nesta seção são armazenados
+								localmente no seu navegador. Isso significa que:
+							</p>
+							<ul className="list-inside list-disc text-sm">
+								<li>
+									Eles não serão apagados ao fechar ou reiniciar o navegador
+								</li>
+								<li>
+									Permanecerão salvos até que você limpe os dados do site
+									manualmente, utilize outro navegador/dispositivo ou redefina
+									as configurações aqui
+								</li>
+							</ul>
+						</AlertDescription>
+					</Alert>
 
 					<div className="flex gap-2 pt-4">
 						<Button onClick={saveSettings} className="flex-1">

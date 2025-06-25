@@ -48,6 +48,7 @@ export default function CreateVault({
 							value={vaultName}
 							onChange={(e) => setVaultName(e.target.value)}
 							placeholder="Ex: Minhas Senhas"
+							maxLength={50}
 						/>
 					</div>
 
@@ -58,6 +59,7 @@ export default function CreateVault({
 							value={masterPassword}
 							onChange={(e) => setMasterPassword(e.target.value)}
 							placeholder="Mínimo 8 caracteres"
+							maxLength={50}
 						/>
 						<p className="text-xs text-muted-foreground mt-1">
 							⚠️ Se você perder esta senha, não será possível recuperar seus

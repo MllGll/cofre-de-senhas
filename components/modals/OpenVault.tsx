@@ -47,6 +47,7 @@ export default function OpenVault({
 							value={masterPassword}
 							onChange={(e) => setMasterPassword(e.target.value)}
 							placeholder="Digite sua senha mestra"
+							maxLength={50}
 						/>
 					</div>
 

@@ -462,7 +462,7 @@ export default function PasswordVault() {
 		<div className="min-h-screen bg-background">
 			{!isVaultOpen ? (
 				<div className="min-h-screen max-w-md mx-auto flex items-center">
-					<Card>
+					<Card className="mx-4">
 						<CardHeader className="text-center">
 							<Vault className="w-16 h-16 text-primary mx-auto mb-4" />
 							<CardTitle className="text-2xl">
@@ -500,12 +500,13 @@ export default function PasswordVault() {
 							<div className="flex items-center gap-3">
 								<Vault className="w-12 h-12 text-primary" />
 								<div>
-									<h1 className="text-xl font-bold">Cofre de Senhas Pessoal</h1>
-									{vaultData && (
-										<p className="text-sm text-muted-foreground flex items-center gap-2">
-											{vaultData.name}
-										</p>
-									)}
+									<h1 className="hidden sm:inline text-xl font-bold">
+										Cofre de Senhas Pessoal
+									</h1>
+									<h1 className="inline sm:hidden text-xl font-bold">CSP</h1>
+									<p className="text-sm text-muted-foreground flex items-center gap-2">
+										{vaultData?.name}
+									</p>
 								</div>
 							</div>
 
@@ -516,11 +517,11 @@ export default function PasswordVault() {
 									onClick={() => setShowOpenVault(true)}
 								>
 									<FolderOpen className="w-4 h-4" />
-									Trocar de Cofre
+									<span className="hidden md:inline">Trocar de Cofre</span>
 								</Button>
 								<Button variant="outline" size="sm" onClick={lockVault}>
 									<Lock className="w-4 h-4" />
-									Bloquear Cofre Atual
+									<span className="hidden md:inline">Bloquear Cofre Atual</span>
 								</Button>
 								<Button
 									variant="outline"
@@ -545,6 +546,7 @@ export default function PasswordVault() {
 										placeholder="Pesquisar credenciais..."
 										value={searchTerm}
 										onChange={(e) => setSearchTerm(e.target.value)}
+										maxLength={50}
 									/>
 								</div>
 
@@ -585,7 +587,7 @@ export default function PasswordVault() {
 
 							{/* Lista de credenciais */}
 							<div className="grid gap-4">
-								{filteredCredentials.length === 0 ? (
+								{!filteredCredentials.length ? (
 									<Card>
 										<CardContent className="pt-6 text-center">
 											<Key className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
@@ -599,18 +601,37 @@ export default function PasswordVault() {
 								) : (
 									filteredCredentials.map((credential) => (
 										<Card key={credential.id}>
-											<CardContent className="pt-6">
+											<CardHeader className="p-4 pl-6 border-b">
+												<div className="flex justify-between items-center">
+													<div className="flex gap-3">
+														<h3 className="font-semibold text-lg">
+															{credential.name}
+														</h3>
+														<Badge variant="secondary">
+															{credential.category}
+														</Badge>
+													</div>
+													<div className="flex gap-2">
+														<Button
+															variant="ghost"
+															size="sm"
+															onClick={() => setEditingCredential(credential)}
+														>
+															<Edit className="w-4 h-4" />
+														</Button>
+														<Button
+															variant="ghost"
+															size="sm"
+															onClick={() => deleteCredential(credential.id)}
+														>
+															<Trash2 className="w-4 h-4" />
+														</Button>
+													</div>
+												</div>
+											</CardHeader>
+											<CardContent className="px-6 py-4">
 												<div className="flex items-start justify-between">
 													<div className="flex-1 space-y-3">
-														<div className="flex items-center gap-3">
-															<h3 className="font-semibold text-lg">
-																{credential.name}
-															</h3>
-															<Badge variant="secondary">
-																{credential.category}
-															</Badge>
-														</div>
-
 														<div className="grid gap-2 text-sm">
 															<div className="flex items-center gap-2">
 																<User className="w-4 h-4 text-muted-foreground" />
@@ -672,10 +693,14 @@ export default function PasswordVault() {
 																	<Globe className="w-4 h-4 text-muted-foreground" />
 																	<span className="font-medium">URL:</span>
 																	<a
-																		href={credential.url}
+																		href={
+																			credential.url.startsWith("http")
+																				? credential.url
+																				: `https://${credential.url}`
+																		}
 																		target="_blank"
 																		rel="noopener noreferrer"
-																		className="text-primary hover:underline"
+																		className="text-primary underline"
 																	>
 																		{credential.url}
 																	</a>
@@ -692,34 +717,17 @@ export default function PasswordVault() {
 															)}
 
 															{credential.notes && (
-																<div className="flex items-center gap-2 h-9">
-																	<StickyNote className="w-4 h-4 text-muted-foreground mt-0.5" />
-																	<span className="font-medium">
+																<div className="flex items-center gap-2 h-9 w-full min-w-0">
+																	<StickyNote className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+																	<span className="font-medium flex-shrink-0">
 																		Observações:
 																	</span>
-																	<span className="text-muted-foreground">
+																	<span className="text-muted-foreground truncate overflow-hidden whitespace-nowrap flex-1">
 																		{credential.notes}
 																	</span>
 																</div>
 															)}
 														</div>
-													</div>
-
-													<div className="flex gap-2 ml-4">
-														<Button
-															variant="ghost"
-															size="sm"
-															onClick={() => setEditingCredential(credential)}
-														>
-															<Edit className="w-4 h-4" />
-														</Button>
-														<Button
-															variant="ghost"
-															size="sm"
-															onClick={() => deleteCredential(credential.id)}
-														>
-															<Trash2 className="w-4 h-4" />
-														</Button>
 													</div>
 												</div>
 											</CardContent>
