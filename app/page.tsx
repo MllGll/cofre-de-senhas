@@ -505,7 +505,7 @@ export default function PasswordVault() {
 									</h1>
 									<h1 className="inline sm:hidden text-xl font-bold">CSP</h1>
 									<p className="text-sm text-muted-foreground flex items-center gap-2">
-										{vaultData?.name}
+										Nome: {vaultData?.name}
 									</p>
 								</div>
 							</div>
