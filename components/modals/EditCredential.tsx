@@ -25,6 +25,7 @@ type EditCredentialProps = {
 	setEditingCredential: Dispatch<SetStateAction<Credential | null>>;
 	updateCredential: () => void;
 	categories: Array<string>;
+	categoryColors: Record<string, { bg: string; text: string }>;
 };
 
 export default function EditCredential({
@@ -32,6 +33,7 @@ export default function EditCredential({
 	setEditingCredential,
 	updateCredential,
 	categories,
+	categoryColors,
 }: EditCredentialProps) {
 	return (
 		<Dialog
@@ -78,7 +80,12 @@ export default function EditCredential({
 								<SelectContent>
 									{categories.map((category) => (
 										<SelectItem key={category} value={category}>
-											{category}
+											<div className="flex items-center gap-2">
+												<div
+													className={`w-3 h-3 rounded-full ${categoryColors[category].bg}`}
+												/>
+												{category}
+											</div>
 										</SelectItem>
 									))}
 								</SelectContent>

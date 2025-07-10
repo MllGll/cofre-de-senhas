@@ -105,6 +105,20 @@ export default function PasswordVault() {
 		"Outros",
 	];
 
+	// Paleta de cores para cada categoria
+	const categoryColors: Record<string, { bg: string; text: string }> = {
+		Email: { bg: "bg-slate-300", text: "text-black" },
+		"Redes Sociais": { bg: "bg-blue-500", text: "text-white" },
+		Trabalho: { bg: "bg-yellow-400", text: "text-black" },
+		Bancos: { bg: "bg-green-600", text: "text-white" },
+		Compras: { bg: "bg-orange-500", text: "text-white" },
+		Streamings: { bg: "bg-red-600", text: "text-white" },
+		Games: { bg: "bg-indigo-600", text: "text-white" },
+		Educação: { bg: "bg-teal-500", text: "text-white" },
+		Saúde: { bg: "bg-pink-500", text: "text-white" },
+		Outros: { bg: "bg-zinc-500", text: "text-white" },
+	};
+
 	// Verificar suporte à File System Access API e contexto
 	const isFileSystemAccessSupported =
 		typeof window !== "undefined" && "showOpenFilePicker" in window;
@@ -561,7 +575,12 @@ export default function PasswordVault() {
 										<SelectItem value="all">Todas as categorias</SelectItem>
 										{categories.map((category) => (
 											<SelectItem key={category} value={category}>
-												{category}
+												<div className="flex items-center gap-2">
+													<div
+														className={`w-3 h-3 rounded-full ${categoryColors[category].bg}`}
+													/>
+													{category}
+												</div>
 											</SelectItem>
 										))}
 									</SelectContent>
@@ -607,7 +626,9 @@ export default function PasswordVault() {
 														<h3 className="font-semibold text-lg">
 															{credential.name}
 														</h3>
-														<Badge variant="secondary">
+														<Badge
+															className={`${categoryColors[credential.category]?.bg} ${categoryColors[credential.category]?.text} `}
+														>
 															{credential.category}
 														</Badge>
 													</div>
@@ -770,6 +791,7 @@ export default function PasswordVault() {
 				setNewCredential={setNewCredential}
 				addCredential={addCredential}
 				categories={categories}
+				categoryColors={categoryColors}
 			/>
 
 			{/* Dialog: Editar Credencial */}
@@ -778,6 +800,7 @@ export default function PasswordVault() {
 				setEditingCredential={setEditingCredential}
 				updateCredential={updateCredential}
 				categories={categories}
+				categoryColors={categoryColors}
 			/>
 
 			{/* Dialog: Configurações */}

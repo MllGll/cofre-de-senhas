@@ -27,6 +27,7 @@ type AddCredentialProps = {
 	setNewCredential: Dispatch<SetStateAction<Partial<Credential>>>;
 	addCredential: () => void;
 	categories: Array<string>;
+	categoryColors: Record<string, { bg: string; text: string }>;
 };
 
 export default function AddCredential({
@@ -36,6 +37,7 @@ export default function AddCredential({
 	setNewCredential,
 	addCredential,
 	categories,
+	categoryColors,
 }: AddCredentialProps) {
 	return (
 		<Dialog open={showAddCredential} onOpenChange={setShowAddCredential}>
@@ -81,7 +83,12 @@ export default function AddCredential({
 								<SelectContent>
 									{categories.map((category) => (
 										<SelectItem key={category} value={category}>
-											{category}
+											<div className="flex items-center gap-2">
+												<div
+													className={`w-3 h-3 rounded-full ${categoryColors[category].bg}`}
+												/>
+												{category}
+											</div>
 										</SelectItem>
 									))}
 								</SelectContent>
