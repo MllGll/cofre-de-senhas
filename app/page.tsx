@@ -1,6 +1,7 @@
 "use client";
 
 import {
+	AlignJustify,
 	Copy,
 	Edit,
 	Eye,
@@ -8,6 +9,7 @@ import {
 	FolderOpen,
 	Globe,
 	Key,
+	LayoutGrid,
 	Lock,
 	Plus,
 	Search,
@@ -57,6 +59,7 @@ export default function PasswordVault() {
 
 	// Estados da UI
 	const [searchTerm, setSearchTerm] = useState("");
+	const [viewMode, setViewMode] = useState<"list" | "grid">("list");
 	const [selectedCategory, setSelectedCategory] = useState<string>("all");
 	const [showCreateVault, setShowCreateVault] = useState(false);
 	const [showOpenVault, setShowOpenVault] = useState(false);
@@ -553,7 +556,7 @@ export default function PasswordVault() {
 						<div className="space-y-6">
 							{/* Barra de pesquisa e filtros */}
 
-							<div className="flex flex-col sm:flex-row gap-4">
+							<div className="flex flex-col sm:flex-row gap-2">
 								<div className="flex-1 relative">
 									<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
 									<Input
@@ -564,6 +567,26 @@ export default function PasswordVault() {
 									/>
 								</div>
 
+								<Button
+									onClick={() => {
+										setShowAddCredential(true);
+										setNewCredential({
+											name: "",
+											username: "",
+											password: "",
+											url: "",
+											notes: "",
+											category: "",
+										});
+									}}
+								>
+									<Plus className="w-4 h-4 mr-2" />
+									Adicionar
+								</Button>
+							</div>
+
+							{/* Filtros */}
+							<div className="flex justify-between gap-2">
 								<Select
 									value={selectedCategory}
 									onValueChange={setSelectedCategory}
@@ -585,27 +608,34 @@ export default function PasswordVault() {
 										))}
 									</SelectContent>
 								</Select>
-
-								<Button
-									onClick={() => {
-										setShowAddCredential(true);
-										setNewCredential({
-											name: "",
-											username: "",
-											password: "",
-											url: "",
-											notes: "",
-											category: "",
-										});
-									}}
-								>
-									<Plus className="w-4 h-4 mr-2" />
-									Adicionar
-								</Button>
+								<div className="flex gap-2">
+									<Button
+										variant={viewMode === "list" ? "default" : "outline"}
+										size="icon"
+										onClick={() => setViewMode("list")}
+										title="Visualização em lista"
+									>
+										<AlignJustify />
+									</Button>
+									<Button
+										variant={viewMode === "grid" ? "default" : "outline"}
+										size="icon"
+										onClick={() => setViewMode("grid")}
+										title="Visualização em grade"
+									>
+										<LayoutGrid />
+									</Button>
+								</div>
 							</div>
 
 							{/* Lista de credenciais */}
-							<div className="grid gap-4">
+							<div
+								className={
+									viewMode === "grid"
+										? "grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+										: "grid gap-4 grid-cols-1"
+								}
+							>
 								{!filteredCredentials.length ? (
 									<Card>
 										<CardContent className="pt-6 text-center">
@@ -618,142 +648,146 @@ export default function PasswordVault() {
 										</CardContent>
 									</Card>
 								) : (
-									filteredCredentials.map((credential) => (
-										<Card key={credential.id}>
-											<CardHeader className="p-4 pl-6 border-b">
-												<div className="flex justify-between items-center">
-													<div className="flex gap-3">
-														<h3 className="font-semibold text-lg">
-															{credential.name}
-														</h3>
-														<Badge
-															className={`${categoryColors[credential.category]?.bg} ${categoryColors[credential.category]?.text} `}
-														>
-															{credential.category}
-														</Badge>
+									[...filteredCredentials]
+										.sort((a, b) => a.name.localeCompare(b.name))
+										.map((credential) => (
+											<Card key={credential.id}>
+												<CardHeader className="p-4 pl-6 border-b">
+													<div className="flex justify-between items-center gap-2">
+														<div className="flex gap-3 items-center flex-1 min-w-0">
+															<h3 className="font-semibold text-lg truncate min-w-0">
+																{credential.name}
+															</h3>
+															<Badge
+																className={`${categoryColors[credential.category]?.bg} ${categoryColors[credential.category]?.text} truncate max-w-[100px] flex-shrink-0`}
+															>
+																{credential.category}
+															</Badge>
+														</div>
+														<div className="flex gap-2">
+															<Button
+																variant="ghost"
+																size="sm"
+																onClick={() => setEditingCredential(credential)}
+															>
+																<Edit className="w-4 h-4" />
+															</Button>
+															<Button
+																variant="ghost"
+																size="sm"
+																onClick={() => deleteCredential(credential.id)}
+															>
+																<Trash2 className="w-4 h-4" />
+															</Button>
+														</div>
 													</div>
-													<div className="flex gap-2">
-														<Button
-															variant="ghost"
-															size="sm"
-															onClick={() => setEditingCredential(credential)}
-														>
-															<Edit className="w-4 h-4" />
-														</Button>
-														<Button
-															variant="ghost"
-															size="sm"
-															onClick={() => deleteCredential(credential.id)}
-														>
-															<Trash2 className="w-4 h-4" />
-														</Button>
-													</div>
-												</div>
-											</CardHeader>
-											<CardContent className="px-6 py-4">
-												<div className="flex items-start justify-between">
-													<div className="flex-1 space-y-3">
-														<div className="grid gap-2 text-sm">
-															<div className="flex items-center gap-2">
-																<User className="w-4 h-4 text-muted-foreground" />
-																<span className="font-medium">Usuário:</span>
-																<span className="font-mono">
-																	{credential.username}
-																</span>
-																<Button
-																	variant="ghost"
-																	size="sm"
-																	onClick={() =>
-																		copyToClipboard(
-																			credential.username,
-																			"Usuário",
-																		)
-																	}
-																>
-																	<Copy className="w-3 h-3" />
-																</Button>
-															</div>
-
-															<div className="flex items-center gap-2">
-																<Key className="w-4 h-4 text-muted-foreground" />
-																<span className="font-medium">Senha:</span>
-																<span className="font-mono">
-																	{showPasswords[credential.id]
-																		? credential.password
-																		: "•".repeat(credential.password.length)}
-																</span>
-																<Button
-																	variant="ghost"
-																	size="sm"
-																	onClick={() =>
-																		togglePasswordVisibility(credential.id)
-																	}
-																>
-																	{showPasswords[credential.id] ? (
-																		<EyeOff className="w-3 h-3" />
-																	) : (
-																		<Eye className="w-3 h-3" />
-																	)}
-																</Button>
-																<Button
-																	variant="ghost"
-																	size="sm"
-																	onClick={() =>
-																		copyToClipboard(
-																			credential.password,
-																			"Senha",
-																		)
-																	}
-																>
-																	<Copy className="w-3 h-3" />
-																</Button>
-															</div>
-
-															{credential.url && (
-																<div className="flex items-center gap-2">
-																	<Globe className="w-4 h-4 text-muted-foreground" />
-																	<span className="font-medium">URL:</span>
-																	<a
-																		href={
-																			credential.url.startsWith("http")
-																				? credential.url
-																				: `https://${credential.url}`
-																		}
-																		target="_blank"
-																		rel="noopener noreferrer"
-																		className="text-primary underline"
-																	>
-																		{credential.url}
-																	</a>
+												</CardHeader>
+												<CardContent className="px-6 py-4">
+													<div className="flex items-start justify-between">
+														<div className="flex-1 space-y-3">
+															<div className="grid gap-2 text-sm">
+																<div className="flex items-center gap-2 flex-1 min-w-0">
+																	<User className="w-4 h-4 text-muted-foreground" />
+																	<span className="font-medium">Usuário:</span>
+																	<span className="font-mono truncate min-w-0">
+																		{credential.username}
+																	</span>
 																	<Button
 																		variant="ghost"
 																		size="sm"
 																		onClick={() =>
-																			copyToClipboard(credential.url, "URL")
+																			copyToClipboard(
+																				credential.username,
+																				"Usuário",
+																			)
 																		}
 																	>
 																		<Copy className="w-3 h-3" />
 																	</Button>
 																</div>
-															)}
 
-															{credential.notes && (
-																<div className="flex items-center gap-2 h-9 w-full min-w-0">
-																	<StickyNote className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-																	<span className="font-medium flex-shrink-0">
-																		Observações:
+																<div className="flex items-center gap-2 overflow-hidden">
+																	<Key className="w-4 h-4 text-muted-foreground" />
+																	<span className="font-medium">Senha:</span>
+																	<span
+																		className={`font-mono min-w-0 whitespace-nowrap overflow-hidden ${showPasswords[credential.id] && "text-ellipsis"}`}
+																	>
+																		{showPasswords[credential.id]
+																			? credential.password
+																			: "•".repeat(credential.password.length)}
 																	</span>
-																	<span className="text-muted-foreground truncate overflow-hidden whitespace-nowrap flex-1">
-																		{credential.notes}
-																	</span>
+																	<Button
+																		variant="ghost"
+																		size="sm"
+																		onClick={() =>
+																			togglePasswordVisibility(credential.id)
+																		}
+																	>
+																		{showPasswords[credential.id] ? (
+																			<EyeOff className="w-3 h-3" />
+																		) : (
+																			<Eye className="w-3 h-3" />
+																		)}
+																	</Button>
+																	<Button
+																		variant="ghost"
+																		size="sm"
+																		onClick={() =>
+																			copyToClipboard(
+																				credential.password,
+																				"Senha",
+																			)
+																		}
+																	>
+																		<Copy className="w-3 h-3" />
+																	</Button>
 																</div>
-															)}
+
+																{credential.url && (
+																	<div className="flex items-center gap-2 overflow-hidden">
+																		<Globe className="w-4 h-4 text-muted-foreground" />
+																		<span className="font-medium">URL:</span>
+																		<a
+																			href={
+																				credential.url.startsWith("http")
+																					? credential.url
+																					: `https://${credential.url}`
+																			}
+																			target="_blank"
+																			rel="noopener noreferrer"
+																			className="text-primary underline truncate min-w-0"
+																		>
+																			{credential.url}
+																		</a>
+																		<Button
+																			variant="ghost"
+																			size="sm"
+																			onClick={() =>
+																				copyToClipboard(credential.url, "URL")
+																			}
+																		>
+																			<Copy className="w-3 h-3" />
+																		</Button>
+																	</div>
+																)}
+
+																{credential.notes && (
+																	<div className="flex items-center gap-2 h-9 w-full min-w-0">
+																		<StickyNote className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+																		<span className="font-medium flex-shrink-0">
+																			Observações:
+																		</span>
+																		<span className="text-muted-foreground truncate overflow-hidden whitespace-nowrap flex-1">
+																			{credential.notes}
+																		</span>
+																	</div>
+																)}
+															</div>
 														</div>
 													</div>
-												</div>
-											</CardContent>
-										</Card>
-									))
+												</CardContent>
+											</Card>
+										))
 								)}
 							</div>
 						</div>
